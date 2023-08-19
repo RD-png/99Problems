@@ -85,3 +85,57 @@ let encode lst =
   in
   aux packed [] |> reverse
 ;;
+
+let duplicate lst =
+  let rec aux lst acc =
+    match lst with
+    | [] -> acc
+    | hd :: tl -> hd :: hd :: acc |> aux tl
+  in
+  aux lst [] |> reverse
+;;
+
+let replicate lst n =
+  let rec aux lst' n' acc =
+    match lst' with
+    | [] -> acc
+    | hd :: tl when n' > 0 -> hd :: acc |> aux lst' @@ n' - 1
+    | _ :: tl -> aux tl n acc
+  in
+  aux lst n [] |> reverse
+;;
+
+let drop lst n =
+  let rec aux lst' n' acc =
+    match lst' with
+    | [] -> acc
+    | hd :: tl when n' > 1 -> hd :: acc |> aux tl @@ n' - 1
+    | _ :: tl -> aux tl n acc
+  in
+  aux lst n [] |> reverse
+;;
+
+let split lst n =
+  let rec aux lst' i acc =
+    match lst' with
+    | [] -> reverse acc, []
+    | hd :: tl ->
+       if i = 0
+       then reverse acc, lst'
+       else hd :: acc |> aux tl @@ i - 1
+  in
+  aux lst n []
+;;
+
+let slice lst start_indx end_indx =
+  let rec aux lst indx acc =
+    match lst with
+    | [] -> acc
+    | _ when indx > end_indx -> acc
+    | hd :: tl ->
+       if indx >= start_indx && indx <= end_indx
+       then hd :: acc |> aux tl @@ indx + 1
+       else aux tl (indx + 1) acc
+  in
+  aux lst 0 [] |> reverse
+;;
