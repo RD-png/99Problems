@@ -49,8 +49,39 @@ let flatten list =
   let rec aux list acc =
     match list with
     | [] -> acc
-    | One x :: tl -> aux tl (x :: acc)
+    | One x :: tl -> x :: acc |> aux tl
     | Many x :: tl -> aux x acc |> aux tl
   in
   aux list [] |> reverse
+;;
+
+let compress lst =
+  let rec aux lst acc =
+    match lst with
+    | [] -> acc
+    | hd :: (hd' :: _ as tl) when hd = hd' -> aux tl acc
+    | hd :: tl -> hd :: acc |> aux tl
+  in
+  aux lst [] |> reverse
+;;
+
+let pack lst =
+  let rec aux lst acc =
+    match lst with
+    | [] -> []
+    | hd :: (hd' :: _ as tl) when hd = hd' -> hd :: acc |> aux tl
+    | hd :: tl -> (hd :: acc) :: (aux tl [])
+  in
+  aux lst []
+;;
+
+let encode lst =
+  let packed = pack lst in
+  let rec aux lst acc =
+    match lst with
+    | [] -> acc
+    | [] :: _ -> acc
+    | (hd :: _) as pck :: tl -> (length pck, hd) :: acc |> aux tl
+  in
+  aux packed [] |> reverse
 ;;
